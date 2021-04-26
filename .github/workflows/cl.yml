@@ -1,4 +1,5 @@
 name: Github Actions
+on: [push]
 
 defaults:
   run:
