@@ -43,17 +43,18 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  Future<void> initDataBase() async{
-    try{
-      await FlutterMssql.initDataBase("192.168.2.177", "1433", "CDE", "xfdev", "Qwer1234");
-    }catch(e){
+  Future<void> initDataBase() async {
+    try {
+      await FlutterMssql.initDataBase(
+          "192.168.2.65", "1433", "CDE", "xfdev", "Qwer1234");
+    } catch (e) {
       print("数据库初始化失败：" + e.toString());
     }
   }
 
-  Future<void> insert() async{
+  Future<void> insert() async {
     List params = [];
-    params.add("210426218693944510910466");
+    params.add("110426218693944510910466");
     params.add("456734");
     params.add(104);
     params.add("201812050443005");
@@ -63,17 +64,14 @@ class _MyAppState extends State<MyApp> {
     params.add(35);
     params.add(2);
     params.add(35);
-    try{
+    try {
       await FlutterMssql.executeSql(
           "INSERT INTO [t_port085_d]([SaleNo],[ItemNo],[SerialNo],[BarCode],[ItemName],[Price],[ItemQty],[ymoney],[zmoney],[SaleMount]) VALUES (?,?,?,?,?,?,?,?,?,?)",
-          params
-      );
-    }catch(e){
+          params);
+    } catch (e) {
       print("数据库操作失败：" + e.toString());
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +84,7 @@ class _MyAppState extends State<MyApp> {
           children: [
             Text('Running on: $_platformVersion\n'),
             ElevatedButton(
-              onPressed: (){
+              onPressed: () {
                 /// 插入数据
                 insert();
               },
