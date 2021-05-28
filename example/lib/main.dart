@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_mssql/flutter_mssql.dart';
+import 'package:flutter_mssql_example/Sqlserver.dart';
 
 void main() {
   runApp(MyApp());
@@ -54,7 +55,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> insert() async {
     List params = [];
-    params.add("110426218693944510910466");
+    params.add(Sqlserver.randomBit(24));
     params.add("456734");
     params.add(104);
     params.add("201812050443005");
@@ -86,7 +87,8 @@ class _MyAppState extends State<MyApp> {
             ElevatedButton(
               onPressed: () {
                 /// 插入数据
-                insert();
+                //insert();
+                Sqlserver.insert();
               },
               child: Text("插入数据"),
             )
