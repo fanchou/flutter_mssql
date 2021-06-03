@@ -86,11 +86,32 @@ class _MyAppState extends State<MyApp> {
             Text('Running on: $_platformVersion\n'),
             ElevatedButton(
               onPressed: () {
+                 var db = new Sqlserver("192.168.2.65", "1433", "CDE", "xfdev", "Qwer1234");
+                 db.initDataBase();
+                 print('数据库连接状态：${Sqlserver.dbStatus}');
+              },
+              child: Text("数据连接"),
+            ),
+            ElevatedButton(
+              onPressed: () {
                 /// 插入数据
-                //insert();
-                Sqlserver.insert();
+                Sqlserver.insert(0);
               },
               child: Text("插入数据"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                /// 插入数据
+                Sqlserver.insert(1);
+              },
+              child: Text("事务插入两条数据"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                /// 插入数据
+                Sqlserver.insert(2);
+              },
+              child: Text("批量插入两个表数据"),
             )
           ],
         ),

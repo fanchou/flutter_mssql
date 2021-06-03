@@ -21,6 +21,8 @@ public class SqlHelper {
   private String userPwd;    // 密码
   private Connection con;
   private PreparedStatement pstm;
+  private PreparedStatement pstm1;
+  private PreparedStatement pstm2;
 
   public SqlHelper(String server, String port, String dbName, String userName, String userPwd) {
     this.server = server;
@@ -38,6 +40,7 @@ public class SqlHelper {
     }
   }
 
+  //处理一条sql
   public int ExecuteNonQuery(String sql, List<Object> params) {
     try {
       con = DriverManager.getConnection(this.connStr, this.userName, this.userPwd);
@@ -55,6 +58,114 @@ public class SqlHelper {
     } finally {
       try {
         pstm.close();
+        con.close();
+      } catch (SQLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+  }
+
+  //处理两条sql -->事务处理
+  public int ExecuteNonQueryTwo(String sql1, String sql2, List<Object> params1, List<Object> params2) {
+
+    try {
+      con = DriverManager.getConnection(this.connStr, this.userName, this.userPwd);
+      con.setAutoCommit(false);//将自动提交关闭
+      pstm1 = con.prepareStatement(sql1);
+      pstm2 = con.prepareStatement(sql2);
+
+      if (params1 != null && !params1.equals("")) { //第一条sql
+        for (int i = 0; i < params1.size(); i++) {
+          pstm1.setObject(i + 1, params1.get(i));
+        }
+        pstm1.addBatch();
+      }
+      if (params2 != null && !params2.equals("")) { //第二条sql
+        for (int i = 0; i < params2.size(); i++) {
+          pstm2.setObject(i + 1, params2.get(i));
+        }
+        pstm2.addBatch();
+      }
+      pstm1.executeUpdate();
+      pstm2.executeUpdate();
+      con.commit();  //提交事务
+      return 1; //
+      //return pstm.executeUpdate();
+    } catch (Exception e) {
+      // TODO: handle exception
+      e.printStackTrace();
+      try {
+        con.rollback();
+      }catch (SQLException err) {
+        err.printStackTrace();
+      }
+      return -1;
+    } finally {
+      try {
+        pstm1.close();
+        pstm2.close();
+        con.close();
+      } catch (SQLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+  }
+  //处理两条sql -->事务处理->批量处理
+  public int ExecuteNonQueryTwoBatch(String sql1, String sql2, List<Object> params1, List<Object> params2) {
+
+    try {
+      con = DriverManager.getConnection(this.connStr, this.userName, this.userPwd);
+      con.setAutoCommit(false);//将自动提交关闭
+      pstm1 = con.prepareStatement(sql1);
+      pstm2 = con.prepareStatement(sql2);
+      long startTime = System.currentTimeMillis();
+      //params1，params2为二维数组
+      if (params1 != null && params1.size() > 0) { //第一条sql赋值
+        int len1 = params1.size();
+        for (int i = 0; i < len1; i++) {
+          List clist = (List) params1.get(i);
+         // System.out.println("p1写入数据key：" + i + "值：" + clist);
+          int clen1 = clist.size();
+          for(int j = 0; j < clen1; j++) {
+            pstm1.setObject(j + 1, clist.get(j));
+          }
+          pstm1.addBatch();
+        }
+      }
+      if (params2 != null && params2.size() > 0) { //第二条sql赋值
+        int len2 = params2.size();
+        for (int i = 0; i < len2; i++) {
+          List clist2 = (List) params2.get(i);
+          int clen2 = clist2.size();
+          for(int j = 0; j < clen2; j++) {
+            pstm2.setObject(j + 1, clist2.get(j));
+          }
+         pstm2.addBatch(); 
+        }
+      }
+      pstm1.executeBatch();
+      pstm2.executeBatch();
+      con.commit();  //提交事务
+      con.setAutoCommit(true);//将自动提交
+      long endTime = System.currentTimeMillis();
+      System.out.println(params1.size() + "调数据，批量事务插入时间:"+(endTime-startTime)+" ms");
+      return 1; //
+      //return pstm.executeUpdate();
+    } catch (Exception e) {
+      // TODO: handle exception
+      e.printStackTrace();
+      try {
+        con.rollback();
+      }catch (SQLException err) {
+        err.printStackTrace();
+      }
+      return -1;
+    } finally {
+      try {
+        pstm1.close();
+        pstm2.close();
         con.close();
       } catch (SQLException e) {
         // TODO Auto-generated catch block
