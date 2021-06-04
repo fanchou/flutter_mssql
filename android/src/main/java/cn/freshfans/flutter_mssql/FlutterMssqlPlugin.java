@@ -158,10 +158,10 @@ public class FlutterMssqlPlugin implements FlutterPlugin, MethodCallHandler {
   }
   /// ExecuteSql
   public String ExecuteTwo(String sql1, String sql2, final List<Object> params1, final List<Object> params2, @NonNull final Result result) {
-    //Log.d("TAG","执行数据库操作sql1:" + sql1);
-    //Log.d("TAG","执行数据库操作sql2:"+ sql2);
-    //Log.d("TAG","数据params1:"+ params1.toString());
-    //Log.d("TAG","数据params2:"+params2.toString());
+    Log.d("TAG","执行数据库操作sql1:" + sql1);
+    Log.d("TAG","执行数据库操作sql2:"+ sql2);
+    Log.d("TAG","数据params1:"+ params1.toString());
+    Log.d("TAG","数据params2:"+params2.toString());
     Log.d("TAG","是否批量处理isBatch:"+isBatch);
     //System.out.println("isBatch:" + isBatch);
     try {
