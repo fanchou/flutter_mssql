@@ -30,6 +30,6 @@ android {
 }
 
 dependencies {
-  implementation files('libs/gson-2.7.jar')
+  implementation files('libs/gson-2.8.7.jar')
   implementation files('libs/jtds-1.2.7.jar')
 }
