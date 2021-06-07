@@ -112,6 +112,13 @@ class _MyAppState extends State<MyApp> {
                 Sqlserver.insert(2);
               },
               child: Text("批量插入两个表数据"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                /// 插入数据
+                Sqlserver.insertSqlData();
+              },
+              child: Text("Statement方式插入表数据"),
             )
           ],
         ),

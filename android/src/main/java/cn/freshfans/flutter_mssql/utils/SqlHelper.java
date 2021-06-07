@@ -11,6 +11,8 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.sql.Statement;
+
 public class SqlHelper {
   private String drive = "net.sourceforge.jtds.jdbc.Driver";
   private String connStr;
@@ -23,6 +25,8 @@ public class SqlHelper {
   private PreparedStatement pstm;
   private PreparedStatement pstm1;
   private PreparedStatement pstm2;
+
+  private Statement spstm;
 
   public SqlHelper(String server, String port, String dbName, String userName, String userPwd) {
     this.server = server;
@@ -37,6 +41,45 @@ public class SqlHelper {
     } catch (ClassNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
+    }
+  }
+
+  //Statement处理sql =>批量事务处理
+  public int ExecuteInsertData(String sql) {
+    try {
+      long startTime = System.currentTimeMillis();
+      con = DriverManager.getConnection(this.connStr, this.userName, this.userPwd);
+      spstm = con.createStatement();
+      long endTime1 = System.currentTimeMillis();
+      System.out.println("创建连接时间:"+(endTime1-startTime)+" ms");
+      con.setAutoCommit(false); //取消自动插入
+      String[] sqlList = sql.split("[;]");
+      for (String s : sqlList) {
+        spstm.addBatch(s);
+      }
+      int[] count = spstm.executeBatch();
+      //int count = spstm.executeUpdate(sql); // 单条数据
+      con.commit(); //批量提交
+      con.setAutoCommit(true);
+      long endTime = System.currentTimeMillis();
+      System.out.println(sqlList.length + "条数据，批量事务插入时间:"+(endTime-startTime)+" ms");
+      return count.length;
+    }catch (Exception e) {
+      e.printStackTrace();
+      try {
+        con.rollback(); //回滚
+      }catch (SQLException err) {
+        err.printStackTrace();
+      }
+      return -1;
+    } finally {
+      try {
+        spstm.close();
+        con.close();
+      } catch (SQLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
   }
 

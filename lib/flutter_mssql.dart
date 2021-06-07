@@ -48,4 +48,10 @@ class FlutterMssql {
     });
     return result;
   }
+  /// Statement方式
+  static Future<Map<String, dynamic>> ExecuteInsertData(String sql) async{
+    final Map<String, dynamic> result =
+    await _channel.invokeMapMethod('ExecuteInsertData',{"sql": sql});
+    return result;
+  }
 }

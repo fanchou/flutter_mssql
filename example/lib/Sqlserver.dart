@@ -23,6 +23,24 @@ class Sqlserver {
     }
   }
 
+  static Future<void> insertSqlData() async{
+    try {
+     // String sql = "INSERT INTO t_port085_d(SaleNo, ItemNo,SerialNo,Price,ItemQty,ymoney,zmoney,SaleMount) VALUES('222204232792324248588288', '11','3', '26.00', 1, '26.00', '0.00', '26.00');";
+      int len = 10;
+      String sql = "";
+      for(int i = 0; i < len; i++) {
+        String SaleNo = Sqlserver.getStr24();
+        sql += "INSERT INTO t_port085_h(SaleNo, SaleDate,LesCode,BandCode,SaleQty,ymoney,smoney,zmoney,SaleDay) VALUES('${SaleNo}', '2021/06/07 09:56:26', '19015901', '111', 1, '20.00', '20.00', '0.00', '2021/06/07');"
+            +"INSERT INTO t_port085_d(SaleNo,ItemNo,SerialNo,Price,ItemQty,ymoney,zmoney,SaleMount) VALUES('${SaleNo}', '111', '1', '20.00', 1, '20.00', '0.00', '20.00');";
+      }
+      int start = DateUtil.getNowDateMs();
+      await FlutterMssql.ExecuteInsertData(sql);
+      int end = DateUtil.getNowDateMs();
+      print('1条数据执行时间：${end - start} ms');
+    }catch(e) {
+      print("数据库操作失败：" + e.toString());
+    }
+  }
   //插入入数据
   static Future<void> insert(int type) async {
     List params1 = [];
@@ -44,7 +62,7 @@ class Sqlserver {
   static Future<void> insertBatch() async {
       List params1 = [];
       List params2 = [];
-      const len = 100;
+      const len = 1000;
       for(int i = 0; i < len; i++) {
         List p1 = [];
         List p2 = [];
